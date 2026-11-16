@@ -1,0 +1,43 @@
+name: Criar APK Android
+
+on:
+  push:
+    branches: [principal]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descarregar projeto
+        uses: actions/checkout@v4
+
+      - name: Preparar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Preparar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Preparar Android
+        uses: android-actions/setup-android@v3
+
+      - name: Extrair projeto
+        run: |
+          unzip SportTVFreeAndroid.zip -d projeto
+
+      - name: Criar APK
+        run: |
+          cd projeto
+          gradle assembleDebug
+
+      - name: Guardar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: SPORT-TV-FREE-APK
+          path: projeto/app/build/outputs/apk/debug/app-debug.apk
